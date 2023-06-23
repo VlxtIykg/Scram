@@ -1,24 +1,42 @@
-# Compiled class file
-*.class
+# eclipse
+bin
+*.launch
+.settings
+.metadata
+.classpath
+.project
 
-# Log file
+# idea
+out
+*.ipr
+*.iws
+*.iml
+.idea
+
+# gradle
+build
+.gradle
+
+# other
+eclipse
+.vscode
+run
+
+# Too big of files
+java_pid8500.hprof
+java_pid16928.hprof
+*hprof
+
+OUTPUT
+
+.DS_STORE
+
+golemRun/*
+
 *.log
 
-# BlueJ files
-*.ctxt
+setting.json
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
+.github
 
-# Package Files #
-*.jar
-*.war
-*.nar
-*.ear
-*.zip
-*.tar.gz
-*.rar
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-replay_pid*
+my.patch

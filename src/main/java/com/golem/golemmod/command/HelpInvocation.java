@@ -1,0 +1,105 @@
+package com.golem.golemmod.command;
+
+import com.golem.golemmod.command.commands.Alias;
+import com.golem.golemmod.command.commands.AttributeCommand;
+import com.golem.golemmod.command.commands.EquipmentCommand;
+import com.golem.golemmod.command.commands.Help;
+import net.minecraft.event.HoverEvent;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatStyle;
+import net.minecraft.util.EnumChatFormatting;
+
+import java.util.List;
+import java.util.Map;
+
+import static com.golem.golemmod.Main.mc;
+
+/**
+ * Write to mc chat
+ */
+public class HelpInvocation {
+	public static void displayHelp() {
+		System.out.println();
+		List<String> allHelpStrings = HelpCache.getAllHelpStrings();
+		for (String helpString : allHelpStrings) {
+			System.out.println(helpString);
+		}
+	}
+
+	public static void displayHelp(Help help) {
+		List<String> helpStrings = help.getHelpStrings();
+		for (String helpString : helpStrings) {
+			System.out.println(helpString);
+		}
+	}
+
+	public static void displayHelp(Help help, int indices) {
+		HelpManager helpStrings = HelpCache.getHelpManager(help.getClass().getName());
+		System.out.println(helpStrings.getHelpStrings(indices));
+	}
+
+	public static void displayHelp(Help help, int start, int end) {
+		HelpManager helpStrings = HelpCache.getHelpManager(help.getClass().getName());
+		System.out.println(helpStrings.getHelpStrings(start, end));
+		//"Help.Type.Warrior Help.Type.Help String", "Help.Type.Warrior can slash.", "Help.Type.Warrior can eat"
+		// 0, 1, 2
+		// 1, 2, 3
+		// Visuallization ^
+	}
+
+	public static void addHelp() {
+		HelpManager helpManager = HelpCache.getHelpManager(AttributeCommand.class.getName());
+		helpManager.addHelpStrings();
+		helpManager = HelpCache.getHelpManager(EquipmentCommand.class.getName(), new EquipmentCommand());
+		helpManager.addHelpStrings();
+		helpManager = HelpCache.getHelpManager(Alias.class.getName(), new Alias());
+		helpManager.addHelpStrings();
+		HelpCache.getHelpManager("StatCommand").addHelpStrings();
+		HelpCache.getHelpManager("UpgradeCommand").addHelpStrings();
+	}
+
+	public static void sendAll() {
+		Map<String, List<String>> allHelpStrings = HelpCache.getHelpMap();
+		for (Map.Entry<String, List<String>> entry : allHelpStrings.entrySet()) {
+			String helpString = entry.getKey();
+			List<String> hoverString = entry.getValue();
+
+
+			StringBuilder sb = new StringBuilder();
+			for (String str : hoverString) {
+				sb.append(str);
+			}
+			String hover = sb.toString();
+
+			addChatMessage(helpString.replace("[", "").replace("]", ""), hover);
+		}
+	}
+
+
+
+	public static void aliasSendAll() {
+		Map<String, Help> cache = HelpCache.getCache();
+		for (Map.Entry<String, Help> entry : cache.entrySet()) {
+			String key = entry.getKey();
+			String cn = CommandName.cmdNameEquivalent(key);
+			addChatMessage("\n" + EnumChatFormatting.BOLD + EnumChatFormatting.AQUA + cn);
+
+			Help help = entry.getValue();
+			List<String> alias = help.getCommandAliases();
+
+			for (String s : alias) {
+				addChatMessage(EnumChatFormatting.DARK_GREEN + "✵" + s + EnumChatFormatting.RESET);
+			}
+
+		}
+			addChatMessage("\n");
+	}
+
+	public static void addChatMessage(String chat) {
+		mc.thePlayer.addChatMessage(new ChatComponentText(chat));
+	}
+
+	public static void addChatMessage(String chat, String hoverChat) {
+		mc.thePlayer.addChatMessage(new ChatComponentText(chat).setChatStyle(new ChatStyle().setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ChatComponentText(hoverChat)))));
+	}
+}
